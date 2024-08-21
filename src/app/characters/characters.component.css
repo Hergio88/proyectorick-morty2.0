@@ -1,0 +1,10 @@
+.characters {
+  text-align: center;
+  color:  white;
+}
+
+.character-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}

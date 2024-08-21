@@ -1,0 +1,54 @@
+.status-alive {
+  color: green;
+}
+
+.status-dead {
+  color: red;
+}
+
+.status-unknown {
+  color: yellow;
+}
+
+.character-card {
+  background-color: #444;
+  color: #f8f9fa;
+  border: 3px solid #444;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.character-card .card-img-top {
+  border: 1px solid #444;
+  object-fit: cover;
+  height: 200px;
+  width: 200px;
+  margin: 0 auto;
+}
+
+.character-card .card-body {
+  background-color: #444;
+}
+
+.character-card .card-title {
+  background-color: #0d6efd;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.character-card .card-text {
+  color: #f8f9fa;
+}
+
+.character-card:hover {
+  background-color: #555;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+}
+
+
+.card {
+  margin-bottom: 20px;
+}
+

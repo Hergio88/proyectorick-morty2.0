@@ -1,0 +1,19 @@
+.card {
+  margin-top: 80px;
+}
+.not-found {
+  text-align: center;
+  margin-top: 50px;
+  text-align: center;
+  margin-top: 50px;
+  color: #ffffff;
+  font-size: 2em;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.dino-animation {
+  max-width: 300px;
+  height: auto;
+  margin-top: 80px;
+}

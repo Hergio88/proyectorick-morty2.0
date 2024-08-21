@@ -1,0 +1,28 @@
+
+.paginator button {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.paginator button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.paginator button:disabled {
+  color: #ffffff;
+}
+
+.paginator button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.paginator .pagination-text {
+  font-size: 16px;
+  margin: 0 20px;
+}
