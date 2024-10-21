@@ -1,0 +1,13 @@
+.characters {
+  text-align: center;
+  color:  white;
+}
+
+.character-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.search-input {
+  margin-left: 20px;
+}

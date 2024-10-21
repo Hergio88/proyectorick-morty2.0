@@ -1,0 +1,89 @@
+<div class="container-fluid d-flex justify-content-center align-items-center bg-dark" style="min-height: 100vh;">
+  <div class="row justify-content-center w-100">
+    <div class="col-md-10 col-lg-6 register">
+      <div class="card text-white w-100 shadow-lg" style="background-color: #333;">
+        <div class="card-body">
+          <h3 class="card-title text-center mb-4">Register</h3>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="fullName" class="form-label text-primary">Full Name</label>
+                <input type="text" class="form-control custom-input" id="fullName" placeholder="Cosme Fulanito" formControlName="name" [ngClass]="{'is-invalid': hasError('name')}" >
+                <p *ngIf="hasError('name')" class="text-danger">{{ getErrorMessage('name') }}</p>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label text-primary">Email</label>
+                <input type="email" class="form-control custom-input" id="email" placeholder="example@example.com" formControlName="mail" [ngClass]="{'is-invalid': hasError('mail')}" >
+                <p *ngIf="hasError('mail')" class="text-danger">{{ getErrorMessage('mail') }}</p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label text-primary">Password</label>
+                <input type="password" class="form-control custom-input" id="password" placeholder="Password" formControlName="password" [ngClass]="{'is-invalid': hasError('password')}" >
+                <p *ngIf="hasError('password')" class="text-danger">{{ getErrorMessage('password') }}</p>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="repeatPassword" class="form-label text-primary">Repeat Password</label>
+                <input type="password" class="form-control custom-input" id="repeatPassword" placeholder="Repeat Password" formControlName="confirmPass" [ngClass]="{'is-invalid': hasError('confirmPass')}" >
+                <p *ngIf="hasError('confirmPass')" class="text-danger">{{ getErrorMessage('confirmPass') }}</p>
+              </div>
+            </div>
+
+            <div formGroupName="address">
+              <div class="mb-3">
+                <label for="address" class="form-label text-primary">Address</label>
+                <input type="text" class="form-control custom-input" id="address" placeholder="Apartment, studio or floor" formControlName="street" [ngClass]="{'is-invalid': hasError('address.street')}" >
+                <p *ngIf="hasError('address.street')" class="text-danger">{{ getErrorMessage('address.street') }}</p>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="city" class="form-label text-primary">City</label>
+                  <input type="text" class="form-control custom-input" id="city" placeholder="Springfield" formControlName="city" [ngClass]="{'is-invalid': hasError('address.city')}" >
+                  <p *ngIf="hasError('address.city')" class="text-danger">{{ getErrorMessage('address.city') }}</p>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="state" class="form-label text-primary">State</label>
+                  <select class="form-select custom-input" id="state" formControlName="country" [ngClass]="{'is-invalid': hasError('address.country')}" >
+                    <option value="Argentina" selected>Argentina</option>
+                  </select>
+                  <p *ngIf="hasError('address.country')" class="text-danger">{{ getErrorMessage('address.country') }}</p>
+                </div>
+
+                <div class="col-md-2 mb-3">
+                  <label for="zip" class="form-label text-primary">Zip</label>
+                  <input type="text" class="form-control custom-input" id="zip" placeholder="5000" formControlName="cp" [ngClass]="{'is-invalid': hasError('address.cp')}" >
+                  <p *ngIf="hasError('address.cp')" class="text-danger">{{ getErrorMessage('address.cp') }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <!-- <button type="submit" class="btn btn-primary">Sign Up</button> -->
+              <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Sign Up</button>
+            </div>
+
+            <div class="text-center mt-3">
+              <a class="text-white" (click)="back()">Already Signed Up? Sign In</a>
+            </div>
+
+            <div *ngIf="successMessage || errorMessage" class="mt-3 text-center">
+              <span class="text-success">{{ successMessage }}</span>
+              <span class="text-danger">{{ errorMessage }}</span>
+            </div>
+
+            <p *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPass')?.touched" class="text-danger">Las contraseñas no coinciden.</p>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

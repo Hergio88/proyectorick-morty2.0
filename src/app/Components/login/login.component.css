@@ -1,0 +1,21 @@
+.container-fluid {
+  background-color: #000;
+}
+
+.card {
+  border-radius: 8px;
+}
+
+.custom-input {
+  border-radius: 4px;
+}
+
+.text-danger {
+  font-size: 0.875rem;
+}
+.my-image {
+  max-height: 100%;
+  max-width: 100%;
+  height: auto;
+  width: auto;
+}

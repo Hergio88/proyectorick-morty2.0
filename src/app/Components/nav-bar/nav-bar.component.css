@@ -1,0 +1,93 @@
+.navbar {
+  background-color: #000B16;
+  padding: 15px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  transition: background-color 0.8s ease;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-collapse {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.navbar a:hover {
+  color: #00FF00;
+}
+
+.container {
+  margin-top: 56px;
+  background-color: #000;
+  padding: 20px;
+}
+
+.navbar a {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.character-card {
+  background-color: #222222;
+  border: 1px solid #2c2c2c;
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.character-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.card-img-top {
+  filter: brightness(0.8);
+  transition: filter 0.3s;
+}
+
+.card-img-top:hover {
+  filter: brightness(1);
+}
+
+.card-title {
+  color: #fff;
+}
+
+.text-decoration-none {
+  color: #fff;
+}
+
+.text-decoration-none:hover {
+  color: #ccc;
+}
+
+.navbar-brand img {
+  height: 60px;
+  width: auto;
+  margin-right: 10px;
+  margin-top: -5px;
+  vertical-align: middle;
+  background-color: transparent;
+}
+
+.btn-border-primary {
+  background-color: transparent;
+  color: #010203;
+  border: 1px solid #007bff;
+}
+
+.btn-border-primary:hover {
+  background-color: #007bff;
+  color: #fff;
+}
