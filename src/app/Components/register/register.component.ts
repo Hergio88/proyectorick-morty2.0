@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { validatePasswordMatch } from '../validators/form-validators';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CustomFormValidatorService } from '../service/CustomFormValidator.Service';
 import { AuthenticationService } from '../service/auth.service';
-import { HttpClient } from '@angular/common/http';
+import { validatePasswordMatch } from '../validators/form-validators';
 
 @Component({
   selector: 'app-register',
@@ -18,16 +19,17 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthenticationService,
+    private customFormValidatorService: CustomFormValidatorService,
     private router: Router
   ) {
-
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(15)]],
       mail: ['', [Validators.required, Validators.email, Validators.minLength(10), Validators.maxLength(50)]],
-      password: [Validators.required, Validators.minLength(8), Validators.maxLength(30)],
-      confirmPass: [Validators.required, Validators.minLength(8), Validators.maxLength(30)],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(30)]],
+      confirmPass: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(30)]],
       address: this.fb.group({
         street: ['', [Validators.required, Validators.maxLength(40)]],
+        location: ['', [Validators.required, Validators.maxLength(40)]],
         city: ['', [Validators.required, Validators.maxLength(30)]],
         country: ['', [Validators.required, Validators.maxLength(50)]],
         cp: ['', [Validators.required, Validators.maxLength(4), Validators.minLength(4)]],
@@ -38,50 +40,71 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {}
 
   onSubmit(): void {
-    console.log('Estado del formulario antes de enviar:', this.registerForm.valid);
-    console.log('Errores del formulario antes de enviar:', this.registerForm.errors);
+    console.log('Estado del formulario:', this.registerForm.valid);
+    console.log('Errores del formulario:', this.registerForm.errors);
 
     if (this.registerForm.valid) {
-      console.log("Datos del formulario:", this.registerForm.value); //borrar
-      this.authService.register(this.registerForm.value).subscribe({
+      const userObject = this.createUserObject();
+
+      this.authService.register(userObject).subscribe({
         next: () => {
           this.successMessage = 'Registro exitoso!';
           this.router.navigate(['/login']);
         },
-        error: (err) => {
-          this.errorMessage = 'Error al registrarse: ' + err.message;
+        error: (error: HttpErrorResponse) => {
+          this.handleError(error);
         }
       });
     } else {
       this.errorMessage = 'Por favor, completa todos los campos correctamente.';
-
-      console.log('Formulario inválido:', this.registerForm.errors);// no borrar
+      this.registerForm.markAllAsTouched();
+      this.logFormErrors(); // Log de errores
     }
   }
 
-  hasError(controlName: string): boolean {
-    const control = this.registerForm.get(controlName);
-    return control ? control.invalid && control.touched : false;
+  createUserObject() {
+    return {
+      name: this.registerForm.value.name,
+      mail: this.registerForm.value.mail,
+      password: this.registerForm.value.password,
+      address: {
+        street: this.registerForm.value.address.street,
+        location: this.registerForm.value.address.location,
+        city: this.registerForm.value.address.city,
+        country: this.registerForm.value.address.country,
+        cp: this.registerForm.value.address.cp,
+      }
+    };
+  }
+
+  handleError(error: HttpErrorResponse) {
+    if (error instanceof HttpErrorResponse) {
+      const resultCode = error.error.header?.resultCode;
+      this.errorMessage = this.authService.getErrorMessage(resultCode) || 'Ocurrió un error inesperado. Por favor intenta nuevamente.';
+    } else {
+      this.errorMessage = 'Ocurrió un error inesperado. Por favor intenta nuevamente.';
+    }
   }
 
   getErrorMessage(controlName: string): string {
-    if (controlName === 'mail') {
-      return this.registerForm.get(controlName)?.hasError('required') ? 'El correo es obligatorio' : 'Correo no válido';
-    }
-    if (controlName === 'password') {
-      return this.registerForm.get(controlName)?.hasError('required') ? 'La contraseña es obligatoria' : 'La contraseña debe tener al menos 6 caracteres';
-    }
-    if (controlName === 'confirmPass') {
+    return this.customFormValidatorService.getValidationMessage(this.registerForm, controlName);
+  }
 
-      if (this.registerForm.hasError('passwordMismatch')) {
-        return 'Las contraseñas no coinciden';
-      }
-      return this.registerForm.get(controlName)?.hasError('required') ? 'La confirmación de contraseña es obligatoria' : '';
-    }
-    return '';
+  hasError(controlName: string): boolean {
+    return this.customFormValidatorService.isControlInvalid(this.registerForm, controlName);
   }
 
   back(): void {
     this.router.navigate(['/login']);
   }
+
+  private logFormErrors(): void {
+    Object.keys(this.registerForm.controls).forEach(controlName => {
+      const control = this.registerForm.get(controlName);
+      if (control && control.errors) {
+        console.log(`Errores en el campo ${controlName}:`, control.errors);
+      }
+    });
+  }
+
 }

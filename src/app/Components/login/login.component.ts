@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../service/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CustomFormValidatorService } from '../service/CustomFormValidator.Service';
 
 @Component({
   selector: 'app-login',
@@ -13,13 +15,14 @@ export class LoginComponent implements OnInit {
   errorMessage: string | null = null;
 
   constructor(
+    private router: Router,
     private fb: FormBuilder,
     private authService: AuthenticationService,
-    private router: Router
+    private formValidatorService: CustomFormValidatorService
   ) {
     this.loginForm = this.fb.group({
       mail: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 
@@ -28,40 +31,37 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
-        next: () => {
+        next: (response) => {
+          sessionStorage.setItem('loginToken', response.data.token);
+          sessionStorage.setItem('loginData', JSON.stringify(response.data));
           this.router.navigate(['/characters']);
-          console.log('se registro OK');
+          console.log('Login exitoso:', response);
         },
-        error: (error) => {
-          console.log('Error en el registro:', error);
+        error: (error: HttpErrorResponse) => {
           if (error.status === 401) {
             this.errorMessage = 'Credenciales inválidas. Intenta nuevamente.';
           } else {
-            this.errorMessage = 'Ocurrió un error inesperado. Por favor intenta más tarde.';
+            this.errorMessage = this.authService.getErrorMessage(error.error.header.resultCode) || 'Ocurrió un error inesperado. Por favor intenta más tarde.';
           }
+          console.log('Error en el login:', error);
         }
       });
     } else {
       this.loginForm.markAllAsTouched();
+      this.errorMessage = 'Por favor, completa todos los campos correctamente.';
     }
   }
 
   hasError(controlName: string): boolean {
-    const control = this.loginForm.get(controlName);
-    return (control?.invalid ?? false) && (control?.touched ?? false);
+    return this.formValidatorService.isControlInvalid(this.loginForm, controlName);
   }
 
   getErrorMessage(controlName: string): string {
-    if (controlName === 'mail') {
-      return this.loginForm.get(controlName)?.hasError('required') ? 'El correo es obligatorio' : 'Correo no válido';
-    }
-    if (controlName === 'password') {
-      return 'La contraseña es obligatoria';
-    }
-    return '';
+    return this.formValidatorService.getValidationMessage(this.loginForm, controlName);
   }
 
   register(): void {
     this.router.navigate(['/register']);
   }
 }
+

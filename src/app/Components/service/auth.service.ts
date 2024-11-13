@@ -9,7 +9,7 @@ export class AuthenticationService {
 
   private apiBaseUrl = 'http://api-auth.academy.mobydigital.com/api';
 
-  constructor (private http: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
   // registrar un nuevo usuario
   register(userData: any): Observable<any> {
@@ -24,6 +24,20 @@ export class AuthenticationService {
       tap(response => console.log('Inicio de sesión exitoso:', response)),
       catchError(this.handleHttpError)
     );
+  }
+
+  isAuthenticated(): boolean {
+    const token = sessionStorage.getItem('loginToken');
+    if (token != null) {
+      return true
+    }
+    return false;
+
+  }
+
+  logout(): void {
+    sessionStorage.removeItem('loginToken');
+    sessionStorage.removeItem('loginData');
   }
 
   private handleHttpError(error: HttpErrorResponse) {

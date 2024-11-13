@@ -1,10 +1,13 @@
+<app-nav-bar></app-nav-bar><br>
+<br>
 <br>
 <br>
 <br>
 <br>
 <div class="container">
   <div class="row">
-    <div class="col-auto">
+    <!-- Detalles del personaje -->
+    <div class="col-auto" *ngIf="character">
       <div class="card mb-3">
         <img [src]="character.image" class="card-img-top" alt="{{ character.name }}">
         <br>
@@ -20,15 +23,24 @@
         <h5 class="card-title">Ubicación: {{ character.location.name }}</h5>
       </div>
     </div>
-    <div class="col-md-6">
+
+    <div class="col-md-6" *ngIf="episodes.length > 0">
       <div class="card mb-3">
         <div class="card-body">
           <h5 class="card-title">Episodios</h5>
           <ul class="list-group">
-            <li class="list-group-item" *ngFor="let episode of character.episode">
-              {{ episode }}
+            <li *ngFor="let episode of episodes">
+              <strong>Episodio {{ episode.episode.substring(4, 6) }}</strong>: {{ episode.name }}
             </li>
           </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6" *ngIf="episodes.length === 0">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">No hay episodios para este personaje.</h5>
         </div>
       </div>
     </div>

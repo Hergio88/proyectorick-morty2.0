@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { CharacterService } from '../service/character.service';
 import { Router } from '@angular/router';
+import { CharacterService } from '../service/character.service';
 
 @Component({
   selector: 'app-characters',
