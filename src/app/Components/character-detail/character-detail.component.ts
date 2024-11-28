@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CharacterService } from '../service/character.service';
 
 @Component({
@@ -11,6 +10,7 @@ import { CharacterService } from '../service/character.service';
 export class CharacterDetailComponent implements OnInit {
   character: any;
   episodes: any[] = [];
+  errorMessage: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -26,7 +26,10 @@ export class CharacterDetailComponent implements OnInit {
         if (!isNaN(id)) {
           this.characterService.getCharacterById(id).subscribe(data => {
             this.character = data;
-            this.loadEpisodeDetails(data.episode);
+            this.loadEpisodeDetails(data.episode); //
+          }, error => {
+            console.error('Error al cargar el personaje', error);
+            this.router.navigateByUrl("not-found");
           });
         } else {
           console.error('Invalid ID format');
@@ -40,14 +43,11 @@ export class CharacterDetailComponent implements OnInit {
   }
 
   loadEpisodeDetails(episodeUrls: string[]): void {
-    this.episodes = [];
-    episodeUrls.forEach(url => {
-      this.characterService.getEpisodeByUrl(url).subscribe(episodeData => {
-        this.episodes.push({
-          name: episodeData.name,
-          episode: episodeData.episode //(ej: G01E03)
-        });
-      });
+    this.characterService.getEpisodesByUrls(episodeUrls).subscribe(episodesData => {
+      this.episodes = episodesData;
+    }, error => {
+      console.error('Error al cargar los episodios', error);
+      this.errorMessage = 'No se pudieron cargar los episodios.';
     });
   }
 }

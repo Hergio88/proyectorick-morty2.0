@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, forkJoin } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 interface Character {
   id: number;
@@ -29,6 +29,8 @@ interface ApiResponse {
 interface Episode {
   name: string;
   episode: string;
+  season: string;
+  episodeNumber: string;
 }
 
 @Injectable({
@@ -40,20 +42,11 @@ export class CharacterService {
 
   constructor(private http: HttpClient) { }
 
-  // nombre y página
   getCharacters(name: string, page: number = 1): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${this.apiUrl}?name=${name}&page=${page}`).pipe(
       catchError(this.handleError)
     );
   }
-
- // detalle por URL
- getEpisodeByUrl(url: string): Observable<Episode> {
-  return this.http.get<Episode>(url).pipe(
-    catchError(this.handleError)
-  );
-}
-
 
   getCharacterById(id: number): Observable<Character> {
     return this.http.get<Character>(`${this.apiUrl}${id}`).pipe(
@@ -61,14 +54,48 @@ export class CharacterService {
     );
   }
 
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Ha ocurrido un error inesperado';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      errorMessage = `Código de error: ${error.status}, Mensaje: ${error.message}`;
-    }
-    console.error(errorMessage);
-    return throwError(errorMessage);
+
+  getEpisodesByUrls(urls: string[]): Observable<Episode[]> {
+    const episodeRequests = urls.map(url =>
+      this.http.get<Episode>(url).pipe(
+        catchError(this.handleError)
+      )
+    );
+
+    return forkJoin(episodeRequests).pipe(
+      map((episodes: Episode[]) => episodes.map((episode: Episode) => ({
+        name: episode.name,
+        episode: episode.episode,
+        season: this.extractSeason(episode.episode),
+        episodeNumber: this.extractEpisodeNumber(episode.episode)
+      })))
+    );
   }
+
+  private extractSeason(episodeCode: string): string {
+    const match = episodeCode.match(/S(\d{2})/);
+    return match ? match[1] : '';
+  }
+
+  private extractEpisodeNumber(episodeCode: string): string {
+    const match = episodeCode.match(/E(\d{2})/);
+    return match ? match[1] : '';
+  }
+
+
+private handleError(error: HttpErrorResponse) {
+  let errorMessage = 'Ha ocurrido un error inesperado';
+
+  if (error.error instanceof ErrorEvent) {
+    errorMessage = `Error: ${error.error.message}`;
+  } else {
+    errorMessage = `Código de error: ${error.status}, Mensaje: ${error.message}`;
+  }
+
+  alert(errorMessage);
+
+  console.error(errorMessage);
+
+  return throwError(errorMessage);
+}
 }

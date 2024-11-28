@@ -6,7 +6,6 @@
 <br>
 <div class="container">
   <div class="row">
-    <!-- Detalles del personaje -->
     <div class="col-auto" *ngIf="character">
       <div class="card mb-3">
         <img [src]="character.image" class="card-img-top" alt="{{ character.name }}">
@@ -30,7 +29,7 @@
           <h5 class="card-title">Episodios</h5>
           <ul class="list-group">
             <li *ngFor="let episode of episodes">
-              <strong>Episodio {{ episode.episode.substring(4, 6) }}</strong>: {{ episode.name }}
+              <strong>Temporada {{ episode.season }} Episodio {{ episode.episodeNumber }}</strong>: {{ episode.name }}
             </li>
           </ul>
         </div>
